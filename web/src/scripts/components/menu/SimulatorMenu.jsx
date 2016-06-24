@@ -92,6 +92,54 @@ const AndroidMenu = ({ display, onClick }) => {
   ])
 }
 
+const toggleStyle = {
+  borderRadius: 4,
+  display: 'flex',
+  flexDirection: 'row',
+  overflow: 'hidden',
+}
+
+const toggleButtonStyle = {
+  width: 70,
+  height: 21,
+  lineHeight: '21px',
+  fontSize: 12,
+  color: 'black',
+  background: 'white',
+  textAlign: 'center',
+  borderWidth: 1,
+  borderColor: 'rgba(0,0,0,0.1)',
+  borderStyle: 'solid',
+}
+
+const toggleButtonActiveStyle = {
+  ...toggleButtonStyle,
+  color: 'white',
+  background: 'linear-gradient(rgb(105, 177, 250), rgb(13, 129, 255))',
+}
+
+class Toggle extends Component {
+  render() {
+    const {options, active, onClick = () => {}} = this.props
+
+    return (
+      <div style={toggleStyle}>
+        {_.map(options, (option, i) => {
+          const style = {
+            ...(active === option ? toggleButtonActiveStyle : toggleButtonStyle),
+            borderLeftWidth: i === options.length - 1 ? 0 : 1,
+          }
+
+          return (
+            <div style={style} onClick={onClick.bind(this, option)}>
+              {option}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+}
 
 class SimulatorMenu extends Component {
   componentDidMount() {
@@ -99,22 +147,20 @@ class SimulatorMenu extends Component {
     this.props.checkAvailableSims()
   }
   render() {
-    const { ios, android, onClick } = this.props
+    const { ios, android, onClick, active = 'iOS', setActiveList } = this.props
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-        <Icon iconUrl={'icons/icon-apple.png'} iconUrl2x={'icons/icon-apple.png'} style={{
-            width: 18,
-            height: 18,
-            marginBottom: 15,
-        }}/>
-      <IOSMenu display={ios} onClick={onClick} />
-        <Icon iconUrl={'icons/icon-android.png'} iconUrl2x={'icons/icon-android.png'} style={{
-          width: 20,
-          height: 24,
-          marginTop: 20,
-          marginBottom: 10,
-        }}/>
-      <AndroidMenu display={android} onClick={onClick} />
+        <Toggle
+          // onClick={setActiveList}
+          options={['iOS', 'Android']}
+          active={active}
+        />
+        <div style={{marginTop: 10}} />
+        {active === 'iOS' ? (
+          <IOSMenu display={ios} onClick={onClick} />
+        ) : (
+          <AndroidMenu display={android} onClick={onClick} />
+        )}
       </div>
     )
   }
